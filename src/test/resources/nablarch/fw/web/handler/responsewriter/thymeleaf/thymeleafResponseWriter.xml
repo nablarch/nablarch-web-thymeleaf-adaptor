@@ -1,0 +1,38 @@
+<component-configuration
+        xmlns="http://tis.co.jp/nablarch/component-configuration"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://tis.co.jp/nablarch/component-configuration https://nablarch.github.io/schema/component-configuration.xsd">
+
+
+  <component name="thymeleafResponseWriter"
+             class="nablarch.fw.web.handler.responsewriter.thymeleaf.ThymeleafResponseWriter">
+    <property name="templateEngine">
+      <component class="org.thymeleaf.TemplateEngine">
+        <property name="templateResolver">
+          <component class="org.thymeleaf.templateresolver.ClassLoaderTemplateResolver"/>
+        </property>
+      </component>
+    </property>
+  </component>
+
+  <component name="httpResponseHandler"
+             class="nablarch.fw.web.handler.HttpResponseHandler">
+    <property name="customResponseWriter" ref="thymeleafResponseWriter"/>
+  </component>
+
+
+  <component class="nablarch.fw.web.handler.responsewriter.thymeleaf.ThymeleafResponseWriter">
+    <property name="templateEngineBuilder">
+      <component class="nablarch.fw.web.handler.responsewriter.thymeleaf.WebAppUsingTemplateEngineBuilder">
+        <property name="templateEngine">
+          <component class="org.thymeleaf.TemplateEngine">
+            <property name="templateResolver">
+              <component class="org.thymeleaf.templateresolver.ClassLoaderTemplateResolver"/>
+            </property>
+          </component>
+        </property>
+      </component>
+    </property>
+  </component>
+
+</component-configuration>
