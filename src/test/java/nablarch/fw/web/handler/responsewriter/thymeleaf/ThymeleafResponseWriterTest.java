@@ -76,7 +76,8 @@ public class ThymeleafResponseWriterTest {
         mockReq.getParameterMap().put("msgInParam", new String[] {"I am parameter."} );
         // リクエストスコープ
         context.setRequestScopedVar("sayHelloTo", "Nabchan");
-        sut.writeResponse(response, context);
+        sut.writeResponse(response.getContentPath().getPath(),
+                          context);
         // 検証
         String bodyString = mockRes.writer.toString();
         assertThat(bodyString, is(EXPECTED_BODY_STRING));
@@ -99,7 +100,8 @@ public class ThymeleafResponseWriterTest {
         // リクエストスコープ
         context.setRequestScopedVar("sayHelloTo", "Nabchan");
 
-        sut.writeResponse(response, context);
+        sut.writeResponse(response.getContentPath().getPath(),
+                          context);
         // 検証
         String bodyString = mockRes.writer.toString();
         assertThat(bodyString, is(EXPECTED_BODY_STRING));
@@ -142,7 +144,8 @@ public class ThymeleafResponseWriterTest {
         // 事前条件を満たしていないインスタンス
         ThymeleafResponseWriter invalid = new ThymeleafResponseWriter();
         // 状態不正で例外が発生すること
-        invalid.writeResponse(response, context);
+        invalid.writeResponse(response.getContentPath().getPath(),
+                              context);
     }
 
     private static class WritableMockResponse extends MockServletResponse {

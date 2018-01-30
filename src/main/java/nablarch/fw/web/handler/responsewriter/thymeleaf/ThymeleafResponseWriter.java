@@ -33,7 +33,7 @@ public class ThymeleafResponseWriter implements CustomResponseWriter {
     /**
      * 処理対象パス判定に使用する正規表現
      *
-     * @see #isResponsibleTo(HttpResponse, ServletExecutionContext)
+     * @see #isResponsibleTo(String, ServletExecutionContext)
      */
     private Pattern pattern = Pattern.compile(".*\\.html");
 
@@ -44,20 +44,15 @@ public class ThymeleafResponseWriter implements CustomResponseWriter {
      * 設定した正規表現に合致した場合に、処理対象と判定する。
      *
      * 例えば、pathPatternに"{@literal /template/.*\.html}を設定した場合、
-     * コンテンツパスが"/template/foo/bar.html"の時、処理対象と判定される。
-     *
-     * @see HttpResponse#getContentPath()
+     * パスが"/template/foo/bar.html"の時、処理対象と判定される。
      */
     @Override
-    public boolean isResponsibleTo(HttpResponse response, ServletExecutionContext context) {
-        String path = response.getContentPath().getPath();
-        return pattern.matcher(path).matches();
+    public boolean isResponsibleTo(String pathToTemplate, ServletExecutionContext context) {
+        return pattern.matcher(pathToTemplate).matches();
     }
 
     @Override
-    public void writeResponse(HttpResponse response, ServletExecutionContext context) throws IOException {
-
-        String pathToTemplate = response.getContentPath().getPath();
+    public void writeResponse(String pathToTemplate, ServletExecutionContext context) throws IOException {
         WebContext webContext = new WebContext(context.getServletRequest(),
                                                context.getServletResponse(),
                                                context.getServletContext(),
