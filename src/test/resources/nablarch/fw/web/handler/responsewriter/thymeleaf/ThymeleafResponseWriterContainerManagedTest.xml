@@ -6,10 +6,13 @@
 
   <component name="thymeleafResponseWriter"
              class="nablarch.fw.web.handler.responsewriter.thymeleaf.ThymeleafResponseWriter">
+    <property name="pathPattern" value="/thymeleaf/.*"/>
     <property name="templateEngine">
       <component class="org.thymeleaf.TemplateEngine">
         <property name="templateResolver">
-          <component class="org.thymeleaf.templateresolver.ClassLoaderTemplateResolver"/>
+          <component class="org.thymeleaf.templateresolver.ClassLoaderTemplateResolver">
+            <property name="prefix" value="/nablarch/fw/web/handler/responsewriter" />
+          </component>
         </property>
       </component>
     </property>

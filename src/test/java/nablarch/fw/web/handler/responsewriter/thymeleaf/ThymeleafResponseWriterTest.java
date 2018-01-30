@@ -1,25 +1,15 @@
 package nablarch.fw.web.handler.responsewriter.thymeleaf;
 
-import nablarch.core.ThreadContext;
-import nablarch.fw.ExecutionContext;
-import nablarch.fw.web.HttpRequest;
-import nablarch.fw.web.HttpRequestHandler;
-import nablarch.fw.web.HttpResponse;
-import nablarch.fw.web.MockHttpRequest;
-import nablarch.fw.web.handler.HttpResponseHandler;
 import nablarch.fw.web.servlet.ServletExecutionContext;
 import nablarch.test.support.tool.Builder;
 import nablarch.test.support.web.servlet.MockServletContext;
 import nablarch.test.support.web.servlet.MockServletRequest;
-import nablarch.test.support.web.servlet.MockServletResponse;
 import org.junit.Before;
 import org.junit.Test;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -43,22 +33,8 @@ public class ThymeleafResponseWriterTest {
     /** 実行コンテキスト */
     private final ServletExecutionContext context = new ServletExecutionContext(mockReq, mockRes, new MockServletContext());
 
-    /** HTTPレスポンス */
-    private static final String PATH_TO_TEMPLATE = "/nablarch/fw/web/handler/responsewriter/thymeleaf/test.html";
-
     /** 実際に出力を行う{@link TemplateEngine} */
     private final TemplateEngine engine = new TemplateEngine();// リクエストパラメータ
-
-    /** テンプレートエンジン出力の期待値 */
-    private static final String EXPECTED_BODY_STRING = Builder.lines(
-            "<!DOCTYPE html>",
-            "<html>",
-            "<body>",
-            "<p>I am parameter.</p>",    // リクエストパラメータ
-            "<p>Nabchan</p>",             // リクエストスコープ
-            "<p>Hello there!</p>",       // メッセージ
-            "</body>",
-            "</html>");
 
     /** {@link org.thymeleaf.templateresolver.ITemplateResolver}の設定をする */
     @Before
@@ -75,44 +51,21 @@ public class ThymeleafResponseWriterTest {
         mockReq.getParameterMap().put("msgInParam", new String[] {"I am parameter."} );
         // リクエストスコープ
         context.setRequestScopedVar("sayHelloTo", "Nabchan");
-        sut.writeResponse(PATH_TO_TEMPLATE,
+        sut.writeResponse("/nablarch/fw/web/handler/responsewriter/thymeleaf/test.html",
                           context);
         // 検証
-        String bodyString = mockRes.writer.toString();
-        assertThat(bodyString, is(EXPECTED_BODY_STRING));
+        String bodyString = mockRes.getBodyString();
+        assertThat(bodyString, is(Builder.lines(
+                "<!DOCTYPE html>",
+                "<html>",
+                "<body>",
+                "<p>I am parameter.</p>",    // リクエストパラメータ
+                "<p>Nabchan</p>",             // リクエストスコープ
+                "<p>Hello there!</p>",       // メッセージ
+                "</body>",
+                "</html>")));
     }
 
-
-    /**
-     *  {@link HttpResponseHandler}に設定した状態で、
-     * {@link ThymeleafResponseWriter}によるレスポンス出力ができること。
-     */
-    @Test
-    @SuppressWarnings("unchecked")
-    public void testWithinHttpResponseHandler() {
-
-        // パラメータ
-        mockReq.getParameterMap().put("msgInParam", new String[] {"I am parameter."} );
-
-        // ハンドラ
-        HttpResponseHandler httpResponseHandler = new HttpResponseHandler();
-        httpResponseHandler.setCustomResponseWriter(sut);
-        context.addHandler(httpResponseHandler);
-        context.addHandler(new HttpRequestHandler() {
-            @Override
-            public HttpResponse handle(HttpRequest request, ExecutionContext ctx) {
-                ThreadContext.setLanguage(null); // defaultのLocaleを使用する
-                ctx.setRequestScopedVar("sayHelloTo", "Nabchan");
-                return new HttpResponse(200, PATH_TO_TEMPLATE);
-            }
-        });
-        // 実行
-        context.handleNext(new MockHttpRequest("GET / HTTP/1.1"));
-
-        // 検証
-        String bodyString = mockRes.writer.toString();
-        assertThat(bodyString, is(EXPECTED_BODY_STRING));
-    }
 
     /** {@link ThymeleafResponseWriter#setPathPattern(String)}で設定した正規表現を用いて、処理対象かどうかの判定ができること。 */
     @Test
@@ -126,11 +79,4 @@ public class ThymeleafResponseWriterTest {
                    is(false));
     }
 
-    private static class WritableMockResponse extends MockServletResponse {
-        private final StringWriter writer = new StringWriter();
-        @Override
-        public PrintWriter getWriter() {
-            return new PrintWriter(writer);
-        }
-    }
 }
