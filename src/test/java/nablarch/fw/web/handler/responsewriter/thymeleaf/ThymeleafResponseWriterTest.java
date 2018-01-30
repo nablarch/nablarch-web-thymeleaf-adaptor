@@ -44,8 +44,7 @@ public class ThymeleafResponseWriterTest {
     private final ServletExecutionContext context = new ServletExecutionContext(mockReq, mockRes, new MockServletContext());
 
     /** HTTPレスポンス */
-    private final HttpResponse response = new HttpResponse(200,
-                                                           "/nablarch/fw/web/handler/responsewriter/thymeleaf/test.html");
+    private static final String PATH_TO_TEMPLATE = "/nablarch/fw/web/handler/responsewriter/thymeleaf/test.html";
 
     /** 実際に出力を行う{@link TemplateEngine} */
     private final TemplateEngine engine = new TemplateEngine();// リクエストパラメータ
@@ -76,7 +75,7 @@ public class ThymeleafResponseWriterTest {
         mockReq.getParameterMap().put("msgInParam", new String[] {"I am parameter."} );
         // リクエストスコープ
         context.setRequestScopedVar("sayHelloTo", "Nabchan");
-        sut.writeResponse(response.getContentPath().getPath(),
+        sut.writeResponse(PATH_TO_TEMPLATE,
                           context);
         // 検証
         String bodyString = mockRes.writer.toString();
@@ -104,7 +103,7 @@ public class ThymeleafResponseWriterTest {
             public HttpResponse handle(HttpRequest request, ExecutionContext ctx) {
                 ThreadContext.setLanguage(null); // defaultのLocaleを使用する
                 ctx.setRequestScopedVar("sayHelloTo", "Nabchan");
-                return response;
+                return new HttpResponse(200, PATH_TO_TEMPLATE);
             }
         });
         // 実行
