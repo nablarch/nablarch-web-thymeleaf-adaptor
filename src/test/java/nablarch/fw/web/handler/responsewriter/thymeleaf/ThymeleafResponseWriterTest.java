@@ -115,6 +115,18 @@ public class ThymeleafResponseWriterTest {
         assertThat(bodyString, is(EXPECTED_BODY_STRING));
     }
 
+    /** {@link ThymeleafResponseWriter#setPathPattern(String)}で設定した正規表現を用いて、処理対象かどうかの判定ができること。 */
+    @Test
+    public void testIsResponsibleTo() {
+        sut.setPathPattern("/template/.*\\.html");
+
+        assertThat(sut.isResponsibleTo("/template/foo/bar/buz.html", context),
+                   is(true));
+
+        assertThat(sut.isResponsibleTo("/index.html", context),
+                   is(false));
+    }
+
     private static class WritableMockResponse extends MockServletResponse {
         private final StringWriter writer = new StringWriter();
         @Override

@@ -1,7 +1,6 @@
 package nablarch.fw.web.handler.responsewriter.thymeleaf;
 
 import nablarch.core.ThreadContext;
-import nablarch.fw.web.HttpResponse;
 import nablarch.fw.web.handler.responsewriter.CustomResponseWriter;
 import nablarch.fw.web.servlet.ServletExecutionContext;
 import org.thymeleaf.TemplateEngine;
@@ -26,20 +25,20 @@ public class ThymeleafResponseWriter implements CustomResponseWriter {
      *
      * @see #isResponsibleTo(String, ServletExecutionContext)
      */
-    private Pattern pattern = Pattern.compile(".*\\.html");
+    private Pattern pathPattern = Pattern.compile(".*\\.html");
 
     /**
      * {@inheritDoc}
      *
-     * 本実装では、レスポンスのコンテンツパスが、
-     * 設定した正規表現に合致した場合に、処理対象と判定する。
+     * 本実装では、引数で与えられたパスが、
+     * 処理対象パス判定用の正規表現にマッチした場合、処理対象と判定する。
      *
-     * 例えば、pathPatternに"{@literal /template/.*\.html}を設定した場合、
+     * 例えば、{@link #setPathPattern(String)}に"{@literal /template/.*\.html}を設定した場合、
      * パスが"/template/foo/bar.html"の時、処理対象と判定される。
      */
     @Override
     public boolean isResponsibleTo(String pathToTemplate, ServletExecutionContext context) {
-        return pattern.matcher(pathToTemplate).matches();
+        return pathPattern.matcher(pathToTemplate).matches();
     }
 
     @Override
@@ -60,5 +59,15 @@ public class ThymeleafResponseWriter implements CustomResponseWriter {
      */
     public void setTemplateEngine(TemplateEngine templateEngine) {
         this.templateEngine = templateEngine;
+    }
+
+    /**
+     * 処理対象パス判定に使用する正規表現を設定する。
+     *
+     * @param pathPattern 処理対象パス判定用の正規表現
+     * @see #isResponsibleTo(String, ServletExecutionContext)
+     */
+    public void setPathPattern(String pathPattern) {
+        this.pathPattern = Pattern.compile(pathPattern);
     }
 }
