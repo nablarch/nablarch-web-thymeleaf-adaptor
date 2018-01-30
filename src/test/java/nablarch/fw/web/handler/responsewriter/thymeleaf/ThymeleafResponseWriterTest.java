@@ -83,30 +83,6 @@ public class ThymeleafResponseWriterTest {
         assertThat(bodyString, is(EXPECTED_BODY_STRING));
     }
 
-    /** {@link ThymeleafResponseWriter}と{@link TemplateEngineBuilder}とを組み合わせて動作すること. */
-    @Test
-    @SuppressWarnings("unchecked")
-    public void testThymeleafResponseWriterWithBuilder() throws IOException {
-        // TemplateEngineなし、TemplateEngineBuilderありにする
-        sut.setTemplateEngine(null);
-        sut.setTemplateEngineBuilder(new TemplateEngineBuilder() {
-            @Override
-            public TemplateEngine build() {
-                return engine;
-            }
-        });
-        // パラメータ
-        mockReq.getParameterMap().put("msgInParam", new String[] {"I am parameter."} );
-        // リクエストスコープ
-        context.setRequestScopedVar("sayHelloTo", "Nabchan");
-
-        sut.writeResponse(response.getContentPath().getPath(),
-                          context);
-        // 検証
-        String bodyString = mockRes.writer.toString();
-        assertThat(bodyString, is(EXPECTED_BODY_STRING));
-
-    }
 
     /**
      *  {@link HttpResponseHandler}に設定した状態で、
@@ -137,15 +113,6 @@ public class ThymeleafResponseWriterTest {
         // 検証
         String bodyString = mockRes.writer.toString();
         assertThat(bodyString, is(EXPECTED_BODY_STRING));
-    }
-
-    @Test(expected = IllegalStateException.class)
-    public void testInvalidState() throws IOException {
-        // 事前条件を満たしていないインスタンス
-        ThymeleafResponseWriter invalid = new ThymeleafResponseWriter();
-        // 状態不正で例外が発生すること
-        invalid.writeResponse(response.getContentPath().getPath(),
-                              context);
     }
 
     private static class WritableMockResponse extends MockServletResponse {

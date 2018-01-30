@@ -14,21 +14,12 @@ import java.util.regex.Pattern;
 /**
  * Thymeleafを使用する{@link CustomResponseWriter}実装クラス。
  *
- * 実際の出力に使用する{@link TemplateEngine}インスタンスは、{@link #setTemplateEngine(TemplateEngine)}で設定する。
- * このプロパティが設定されていないは場合、{@link #setTemplateEngineBuilder(TemplateEngineBuilder)}
- * で設定されたビルダーを使用してインスタンス生成を行う。
- * このため、この2つのプロパティはいずれかが設定されていなければならない。
- * （両方が設定されている場合は、{@link #setTemplateEngine(TemplateEngine)}の設定が使用される）
- *
  * @author Tsuyoshi Kawasaki
  */
 public class ThymeleafResponseWriter implements CustomResponseWriter {
 
     /** テンプレートエンジン */
     private TemplateEngine templateEngine;
-
-    /** テンプレートエンジン構築クラス */
-    private TemplateEngineBuilder templateEngineBuilder;
 
     /**
      * 処理対象パス判定に使用する正規表現
@@ -59,41 +50,7 @@ public class ThymeleafResponseWriter implements CustomResponseWriter {
                                                ThreadContext.getLanguage());   // Locale
         Writer writer = context.getServletResponse().getWriter();
 
-        TemplateEngine engine = getTemplateEngine();
-        engine.process(pathToTemplate, webContext, writer);
-    }
-
-    /**
-     * {@link TemplateEngine}を取得する。
-     *
-     * TemplateEngineのインスタンスが設定されている場合は、それをそのまま返却する。
-     * 設定されていない場合、ファクトリでインスタンス生成し返却する。
-     *
-     * フィールドのnull判定と代入が必要なため同期化をしている。
-     *
-     * @return テンプレートエンジン
-     */
-    private synchronized TemplateEngine getTemplateEngine() {
-        if (templateEngine != null) {
-            return templateEngine;
-        }
-        if (templateEngineBuilder == null) {
-            throw new IllegalStateException("either templateEngine or templateEngineBuilder must be set.");
-        }
-        templateEngine = templateEngineBuilder.build();
-        return templateEngine;
-    }
-
-    /**
-     * {@link TemplateEngineBuilder}を設定する。
-     *
-     * {@link #setTemplateEngine(TemplateEngine)}で設定できないような
-     * 複雑なオブジェクト生成ロジックが必要な場合は、本プロパティにビルダークラスを設定する。
-     *
-     * @param templateEngineBuilder テンプレートエンジンファクトリ
-     */
-    public void setTemplateEngineBuilder(TemplateEngineBuilder templateEngineBuilder) {
-        this.templateEngineBuilder = templateEngineBuilder;
+        templateEngine.process(pathToTemplate, webContext, writer);
     }
 
     /**

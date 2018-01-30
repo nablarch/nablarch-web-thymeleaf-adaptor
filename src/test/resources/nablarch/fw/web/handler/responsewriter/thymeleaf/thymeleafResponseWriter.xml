@@ -21,18 +21,4 @@
   </component>
 
 
-  <component class="nablarch.fw.web.handler.responsewriter.thymeleaf.ThymeleafResponseWriter">
-    <property name="templateEngineBuilder">
-      <component class="nablarch.fw.web.handler.responsewriter.thymeleaf.WebAppUsingTemplateEngineBuilder">
-        <property name="templateEngine">
-          <component class="org.thymeleaf.TemplateEngine">
-            <property name="templateResolver">
-              <component class="org.thymeleaf.templateresolver.ClassLoaderTemplateResolver"/>
-            </property>
-          </component>
-        </property>
-      </component>
-    </property>
-  </component>
-
 </component-configuration>
