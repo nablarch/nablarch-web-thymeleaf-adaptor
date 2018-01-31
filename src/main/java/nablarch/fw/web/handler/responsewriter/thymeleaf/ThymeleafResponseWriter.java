@@ -12,12 +12,14 @@ import java.util.regex.Pattern;
 
 /**
  * Thymeleafを使用する{@link CustomResponseWriter}実装クラス。
- *
+ * <p>
  * 本実装では、引数で与えられたパスが、処理対象パス判定用の正規表現にマッチした場合、
  * 処理対象と判定する。
- * 例えば、{@link #setPathPattern(String)}に"{@literal /template/.*\.html}を設定した場合、
+ * 例えば、{@link #setPathPattern(String)}に"{@literal /template/.*\.html}"を設定した場合、
  * パスが"/template/foo/bar.html"の時、処理対象と判定される。
- *
+ * pathPatternプロパティにはデフォルト値として"{@literal .*\.html}"が設定されている。
+ * </p>
+ * <p>
  * Thymeleafでは、テンプレートのパスを解決する際、サフィックスを省略できるが、
  * 本クラスを使用する場合はサフィックスの省略は行わないこと。
  * <ul>
@@ -25,6 +27,7 @@ import java.util.regex.Pattern;
  *     <li>NG: {@code return new HttpResponse("/path/to/template");}</li>
  * </ul>
  * サフィックスを省略した場合、セッションストアからリクエストスコープへの移送が行われなくなる。
+ * </p>
  *
  * @author Tsuyoshi Kawasaki
  * @see org.thymeleaf.templateresolver.AbstractConfigurableTemplateResolver#setSuffix(java.lang.String)
@@ -34,11 +37,7 @@ public class ThymeleafResponseWriter implements CustomResponseWriter {
     /** テンプレートエンジン */
     private TemplateEngine templateEngine;
 
-    /**
-     * 処理対象パス判定に使用する正規表現
-     *
-     * @see #isResponsibleTo(String, ServletExecutionContext)
-     */
+    /** 処理対象パス判定に使用する正規表現 */
     private Pattern pathPattern = Pattern.compile(".*\\.html");
 
     @Override
@@ -70,7 +69,6 @@ public class ThymeleafResponseWriter implements CustomResponseWriter {
      * 処理対象パス判定に使用する正規表現を設定する。
      *
      * @param pathPattern 処理対象パス判定用の正規表現
-     * @see #isResponsibleTo(String, ServletExecutionContext)
      */
     public void setPathPattern(String pathPattern) {
         this.pathPattern = Pattern.compile(pathPattern);
