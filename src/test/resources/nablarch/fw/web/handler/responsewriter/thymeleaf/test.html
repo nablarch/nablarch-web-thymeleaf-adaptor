@@ -1,0 +1,8 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<p th:text="${param.msgInParam}">リクエストスコープの値が使えること</p>
+<p th:text="${sayHelloTo}">リクエストスコープの値が使えること</p>
+<p th:text="#{test.greeting}">外部のメッセージを取り込めること</p>
+</body>
+</html>
