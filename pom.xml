@@ -19,6 +19,15 @@
     <version>5u13-SNAPSHOT</version>
   </parent>
 
+  <profiles>
+    <profile>
+      <id>java9</id>
+      <properties>
+        <junit.additionalArgLine>--add-modules java.activation,java.xml.bind</junit.additionalArgLine>
+      </properties>
+    </profile>
+  </profiles>
+
   <dependencies>
     <dependency>
       <groupId>org.thymeleaf</groupId>
