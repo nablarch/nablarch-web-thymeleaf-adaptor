@@ -13,6 +13,7 @@ import nablarch.fw.web.servlet.ServletExecutionContext;
 import nablarch.test.support.SystemRepositoryResource;
 import nablarch.test.support.web.servlet.MockServletContext;
 import nablarch.test.support.web.servlet.MockServletRequest;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -21,18 +22,27 @@ import static org.junit.Assert.assertThat;
 
 public class ThymeleafResponseWriterContainerManagedTest {
 
-    /** モックの{@link javax.servlet.ServletRequest} */
+    /** モックの{@link jakarta.servlet.ServletContext}  */
+    private final MockServletContext mockServletContext = new MockServletContext();
+
+    /** モックの{@link jakarta.servlet.ServletRequest} */
     private final MockServletRequest mockReq = new MockServletRequest();
 
-    /** モックの{@link javax.servlet.ServletResponse} */
+    /** モックの{@link jakarta.servlet.ServletResponse} */
     private final WritableMockResponse mockRes = new WritableMockResponse();
 
     /** 実行コンテキスト */
-    private final ServletExecutionContext context = new ServletExecutionContext(mockReq, mockRes, new MockServletContext());
+    private final ServletExecutionContext context = new ServletExecutionContext(mockReq, mockRes, mockServletContext);
 
     @Rule
     public SystemRepositoryResource repo = new SystemRepositoryResource(
             "nablarch/fw/web/handler/responsewriter/thymeleaf/ThymeleafResponseWriterContainerManagedTest.xml");
+
+    @Before
+    public void setUp() {
+        mockServletContext.setContextPath("/");
+        mockReq.setServletContext(mockServletContext);
+    }
 
     /**
      * {@link SystemRepository}に登録したコンポーネントとして実行できること。

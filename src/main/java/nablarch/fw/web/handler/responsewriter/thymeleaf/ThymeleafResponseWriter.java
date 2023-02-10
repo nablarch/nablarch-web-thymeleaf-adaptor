@@ -5,6 +5,8 @@ import nablarch.fw.web.handler.responsewriter.CustomResponseWriter;
 import nablarch.fw.web.servlet.ServletExecutionContext;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
+import org.thymeleaf.web.servlet.IServletWebExchange;
+import org.thymeleaf.web.servlet.JakartaServletWebApplication;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -47,9 +49,12 @@ public class ThymeleafResponseWriter implements CustomResponseWriter {
 
     @Override
     public void writeResponse(String pathToTemplate, ServletExecutionContext context) throws IOException {
-        WebContext webContext = new WebContext(context.getServletRequest(),
-                                               context.getServletResponse(),
-                                               context.getServletContext(),
+        JakartaServletWebApplication application
+                = JakartaServletWebApplication.buildApplication(context.getServletContext());
+        IServletWebExchange exchange
+                = application.buildExchange(context.getServletRequest(), context.getServletResponse());
+
+        WebContext webContext = new WebContext(exchange,
                                                ThreadContext.getLanguage());   // Locale
         Writer writer = context.getServletResponse().getWriter();
 
