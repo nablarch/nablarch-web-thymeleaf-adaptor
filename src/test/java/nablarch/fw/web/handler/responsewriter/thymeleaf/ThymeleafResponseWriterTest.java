@@ -24,14 +24,17 @@ public class ThymeleafResponseWriterTest {
     /** テスト対象 */
     private final ThymeleafResponseWriter sut = new ThymeleafResponseWriter();
 
-    /** モックの{@link javax.servlet.ServletRequest} */
+    /** モックの{@link jakarta.servlet.ServletContext}  */
+    private final MockServletContext mockServletContext = new MockServletContext();
+
+    /** モックの{@link jakarta.servlet.ServletRequest} */
     private final MockServletRequest mockReq = new MockServletRequest();
 
-    /** モックの{@link javax.servlet.ServletResponse} */
+    /** モックの{@link jakarta.servlet.ServletResponse} */
     private final WritableMockResponse mockRes = new WritableMockResponse();
 
     /** 実行コンテキスト */
-    private final ServletExecutionContext context = new ServletExecutionContext(mockReq, mockRes, new MockServletContext());
+    private final ServletExecutionContext context = new ServletExecutionContext(mockReq, mockRes, mockServletContext);
 
     /** 実際に出力を行う{@link TemplateEngine} */
     private final TemplateEngine engine = new TemplateEngine();// リクエストパラメータ
@@ -41,6 +44,9 @@ public class ThymeleafResponseWriterTest {
     public void setUp() {
         engine.setTemplateResolver(new ClassLoaderTemplateResolver());
         sut.setTemplateEngine(engine);
+
+        mockServletContext.setContextPath("/");
+        mockReq.setServletContext(mockServletContext);
     }
 
     /** {@link ThymeleafResponseWriter}単体で動作すること. */
